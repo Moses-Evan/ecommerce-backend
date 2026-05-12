@@ -1,6 +1,7 @@
 package com.ecommerce.niorra.entity;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -15,10 +16,18 @@ public class Product {
     private Long id;
 
     private String action;
+    
+    private String productType;
+    
+    private boolean productBestSeller;
+    
+    private String productSubType;
 
     private String productBrand;
 
     private String productColor;
+    
+    private String productColorCode;
 
     @Column(length = 5000)
     private String productDescription;
@@ -27,14 +36,14 @@ public class Product {
 
     private String productFabricType;
 
-    @Column(columnDefinition = "LONGTEXT")
-    private String productImages;
+    @ElementCollection
+    private List<String> productImages;
 
     private Double productMrp;
 
     private String productName;
 
-    private String productOccasion;
+    private List<String> productOccasion;
 
     private String productSaleReason;
 

@@ -5,10 +5,10 @@ import java.util.List;
 
 @Data
 public class ProductDTO {
-
     private String action;
     private String productBrand;
     private String productColor;
+    private String productColorCode;
     private String productDescription;
     private Integer productDiscount;
     private String productFabricType;
@@ -20,4 +20,7 @@ public class ProductDTO {
     private Double productSellingPrice;
     private String productSku;
     private Integer productStock;
+    private boolean productBestSeller;
+    private String productType;
+    private String productSubType;
 }
