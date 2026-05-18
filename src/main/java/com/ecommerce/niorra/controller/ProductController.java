@@ -32,7 +32,6 @@ public class ProductController {
 	@GetMapping("/{id}")
 	public Product getProductById(@PathVariable Long id) {
 		Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
-		product.setProductBestSeller(true);
 		return product;
 	}
 }

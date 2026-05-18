@@ -19,8 +19,6 @@ public class Product {
     
     private String productType;
     
-    private boolean productBestSeller;
-    
     private String productSubType;
 
     private String productBrand;
@@ -56,4 +54,9 @@ public class Product {
     private Timestamp createdAt;
     
     private Timestamp updatedAt;
+    
+    private String productCategory;
+    
+    private List<String> productBadges;
+    
 }
