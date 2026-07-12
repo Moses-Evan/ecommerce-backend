@@ -2,8 +2,8 @@ package com.ecommerce.niorra.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.ecommerce.niorr.enums.OrderStatus;
 import com.ecommerce.niorra.entity.Order;
+import com.ecommerce.niorra.enums.OrderStatus;
 
 import java.util.List;
 import java.util.Optional;

@@ -6,9 +6,9 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.ecommerce.niorr.enums.OrderStatus;
-import com.ecommerce.niorr.enums.PaymentMethod;
-import com.ecommerce.niorr.enums.PaymentStatus;
+import com.ecommerce.niorra.enums.OrderStatus;
+import com.ecommerce.niorra.enums.PaymentMethod;
+import com.ecommerce.niorra.enums.PaymentStatus;
 
 @Data
 @Builder

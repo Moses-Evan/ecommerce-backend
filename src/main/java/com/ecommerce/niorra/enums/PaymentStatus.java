@@ -1,4 +1,4 @@
-package com.ecommerce.niorr.enums;
+package com.ecommerce.niorra.enums;
 
 public enum PaymentStatus {
 
