@@ -8,7 +8,7 @@ import lombok.Data;
 
 import java.util.List;
 
-import com.ecommerce.niorr.enums.PaymentMethod;
+import com.ecommerce.niorra.enums.PaymentMethod;
 
 @Data
 public class CreateOrderRequest {

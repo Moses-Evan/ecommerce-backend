@@ -24,14 +24,32 @@ public class ProductController {
 		ObjectMapper mapper = new ObjectMapper();
 		System.out.println("Fetching all products...");
 		List<Product> products = productRepository.findAll();
+		products.forEach(product -> {
+		    List<String> updatedImages = product.getProductImages()
+		            .stream()
+		            .map(url -> url.replace(
+		                    "http://localhost:8080",
+		                    "https://ql4zl5fz-8080.inc1.devtunnels.ms"
+		            ))
+		            .toList();
 
-		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(products));
+		    product.setProductImages(updatedImages);
+		});
+		// System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(products));
 		return products;
 	}
 
 	@GetMapping("/{id}")
 	public Product getProductById(@PathVariable Long id) {
 		Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+		product.setProductImages(
+			    product.getProductImages().stream()
+			        .map(url -> url.replace(
+			            "http://localhost:8080",
+			            "https://ql4zl5fz-8080.inc1.devtunnels.ms"
+			        ))
+			        .toList()
+			);
 		return product;
 	}
 }

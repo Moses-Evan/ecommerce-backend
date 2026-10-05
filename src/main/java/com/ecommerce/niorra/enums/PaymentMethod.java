@@ -1,6 +1,5 @@
 package com.ecommerce.niorra.enums;
 
-
 public enum PaymentMethod {
 
     COD,
@@ -11,5 +10,7 @@ public enum PaymentMethod {
 
     NET_BANKING,
 
-    WALLET
+    WALLET,
+
+    PAYPAL
 }
