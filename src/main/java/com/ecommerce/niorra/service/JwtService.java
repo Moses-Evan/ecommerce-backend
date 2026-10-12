@@ -17,7 +17,7 @@ public class JwtService {
     @Value("${app.jwt.secret:niorra-google-auth-secret-key-very-long-1234567890}")
     private String secret;
 
-    @Value("${app.jwt.expiration-ms:86400000}")
+    @Value("${app.jwt.expiration-ms:2592000000}")
     private long expirationMs;
 
     public String generateToken(String email, String role) {

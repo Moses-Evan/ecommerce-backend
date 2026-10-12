@@ -67,7 +67,7 @@ public class SecurityConfig {
                                                         logger.error("Google OAuth2 login failed", exception);
                                                         response.sendRedirect("/login?error");
                                                 }))
-                                .logout(logout -> logout.logoutSuccessUrl("http://localhost:5173"))
+                                .logout(logout -> logout.logoutSuccessUrl("https://niorra.eu"))
                                 .httpBasic(Customizer.withDefaults())
                                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
