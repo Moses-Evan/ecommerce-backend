@@ -25,7 +25,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final AppUserService appUserService;
     private final JwtService jwtService;
 
-    @Value("${app.frontend-url:http://localhost:5173}")
+    @Value("${app.frontend-url:https://niorra.eu}")
+    // @Value("${app.frontend-url:http://localhost:5173}")
     private String frontendUrl;
 
     @Override
