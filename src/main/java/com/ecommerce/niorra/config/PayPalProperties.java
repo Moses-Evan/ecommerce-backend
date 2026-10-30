@@ -16,4 +16,5 @@ public class PayPalProperties {
     private String currency = "USD";
     private String returnUrl;
     private String cancelUrl;
+    private String webhookId;
 }

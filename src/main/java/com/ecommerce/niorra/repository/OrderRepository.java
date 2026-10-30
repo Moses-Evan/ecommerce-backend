@@ -21,6 +21,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Optional<Order> findByOrderNumber(String orderNumber);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select o from Order o where o.paypalOrderId = :paypalOrderId")
+    Optional<Order> findByPaypalOrderIdForUpdate(@Param("paypalOrderId") String paypalOrderId);
+
     List<Order> findByCustomerEmailOrderByCreatedAtDesc(String customerEmail);
 
     List<Order> findByOrderStatus(OrderStatus status);

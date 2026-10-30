@@ -54,7 +54,8 @@ public class SecurityConfig {
                                                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/auth/**", "/api/products/**",
-                                                                "/admin/api/v1/products/**")
+                                                                "/admin/api/v1/products/**",
+                                                                "/api/paypal/webhooks")
                                                 .permitAll()
                                                 .requestMatchers("/api/orders/**", "/api/addresses/**").authenticated()
                                                 .anyRequest().permitAll())

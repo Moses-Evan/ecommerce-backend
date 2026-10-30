@@ -29,13 +29,13 @@ public class ProductController {
 		            .stream()
 		            .map(url -> url.replace(
 		                    "http://localhost:8080",
-		                    "https://ql4zl5fz-8080.inc1.devtunnels.ms"
+		                    "https://api.niorra.eu"
 		            ))
 		            .toList();
 
 		    product.setProductImages(updatedImages);
 		});
-		// System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(products));
+		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(products));
 		return products;
 	}
 
@@ -46,7 +46,7 @@ public class ProductController {
 			    product.getProductImages().stream()
 			        .map(url -> url.replace(
 			            "http://localhost:8080",
-			            "https://ql4zl5fz-8080.inc1.devtunnels.ms"
+			            "https://api.niorra.eu"
 			        ))
 			        .toList()
 			);

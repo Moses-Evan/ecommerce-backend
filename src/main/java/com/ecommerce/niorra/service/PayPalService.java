@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -14,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.ecommerce.niorra.config.PayPalProperties;
 import com.ecommerce.niorra.entity.Order;
 
+import tools.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -66,6 +68,40 @@ public class PayPalService {
                                 .headers(headers -> headers.setBearerAuth(accessToken()))
                                 .retrieve()
                                 .body(Map.class);
+        }
+
+        @SuppressWarnings("unchecked")
+        public Map<String, Object> verifyWebhookSignature(HttpHeaders headers, JsonNode event) {
+                if (properties.getWebhookId() == null || properties.getWebhookId().isBlank()) {
+                        throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+                                        "PayPal webhook ID is not configured");
+                }
+
+                Map<String, Object> request = Map.of(
+                                "auth_algo", requiredHeader(headers, "PAYPAL-AUTH-ALGO"),
+                                "cert_url", requiredHeader(headers, "PAYPAL-CERT-URL"),
+                                "transmission_id", requiredHeader(headers, "PAYPAL-TRANSMISSION-ID"),
+                                "transmission_sig", requiredHeader(headers, "PAYPAL-TRANSMISSION-SIG"),
+                                "transmission_time", requiredHeader(headers, "PAYPAL-TRANSMISSION-TIME"),
+                                "webhook_id", properties.getWebhookId(),
+                                "webhook_event", event);
+
+                return client().post()
+                                .uri("/v1/notifications/verify-webhook-signature")
+                                .headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken()))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(request)
+                                .retrieve()
+                                .body(Map.class);
+        }
+
+        private String requiredHeader(HttpHeaders headers, String name) {
+                String value = headers.getFirst(name);
+                if (value == null || value.isBlank()) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                        "Missing PayPal webhook signature header: " + name);
+                }
+                return value;
         }
 
         private String accessToken() {
