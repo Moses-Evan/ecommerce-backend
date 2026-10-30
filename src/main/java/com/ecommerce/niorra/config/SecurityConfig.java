@@ -105,7 +105,7 @@ public class SecurityConfig {
                                 }
 
                                 String redirectUri = request.getParameter("redirect_uri");
-                                if (redirectUri != null && !redirectUri.isBlank()) {
+                                if (isAllowedRedirectUri(redirectUri)) {
                                         HttpSession session = request.getSession();
                                         session.setAttribute("OAUTH2_REDIRECT_URI", redirectUri);
                                 }
@@ -114,19 +114,22 @@ public class SecurityConfig {
                                                 authorizationRequest.getAdditionalParameters());
                                 additionalParameters.put("prompt", "select_account");
 
-                                if (redirectUri != null && !redirectUri.isBlank()) {
-                                        additionalParameters.put("redirect_uri", redirectUri);
-                                }
-
                                 OAuth2AuthorizationRequest.Builder builder = OAuth2AuthorizationRequest.from(
                                                 authorizationRequest)
                                                 .additionalParameters(additionalParameters);
 
-                                if (redirectUri != null && !redirectUri.isBlank()) {
-                                        builder.redirectUri(redirectUri);
+                                return builder.build();
+                        }
+
+                        private boolean isAllowedRedirectUri(String redirectUri) {
+                                if (redirectUri == null || redirectUri.isBlank()) {
+                                        return false;
                                 }
 
-                                return builder.build();
+                                return redirectUri.startsWith("https://")
+                                                || redirectUri.startsWith("http://")
+                                                || redirectUri.startsWith("niorra://")
+                                                || redirectUri.startsWith("myapp://");
                         }
                 };
         }
