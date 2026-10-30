@@ -29,6 +29,7 @@ import com.ecommerce.niorra.security.JwtAuthenticationFilter;
 import com.ecommerce.niorra.security.OAuth2SuccessHandler;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Configuration
 public class SecurityConfig {
@@ -85,7 +86,7 @@ public class SecurityConfig {
                         @Override
                         public OAuth2AuthorizationRequest resolve(HttpServletRequest request) {
                                 OAuth2AuthorizationRequest authorizationRequest = defaultResolver.resolve(request);
-                                return addSelectAccountPrompt(authorizationRequest);
+                                return customizeAuthorizationRequest(request, authorizationRequest);
                         }
 
                         @Override
@@ -93,22 +94,39 @@ public class SecurityConfig {
                                         String clientRegistrationId) {
                                 OAuth2AuthorizationRequest authorizationRequest = defaultResolver.resolve(request,
                                                 clientRegistrationId);
-                                return addSelectAccountPrompt(authorizationRequest);
+                                return customizeAuthorizationRequest(request, authorizationRequest);
                         }
 
-                        private OAuth2AuthorizationRequest addSelectAccountPrompt(
+                        private OAuth2AuthorizationRequest customizeAuthorizationRequest(
+                                        HttpServletRequest request,
                                         OAuth2AuthorizationRequest authorizationRequest) {
                                 if (authorizationRequest == null) {
                                         return null;
+                                }
+
+                                String redirectUri = request.getParameter("redirect_uri");
+                                if (redirectUri != null && !redirectUri.isBlank()) {
+                                        HttpSession session = request.getSession();
+                                        session.setAttribute("OAUTH2_REDIRECT_URI", redirectUri);
                                 }
 
                                 Map<String, Object> additionalParameters = new LinkedHashMap<>(
                                                 authorizationRequest.getAdditionalParameters());
                                 additionalParameters.put("prompt", "select_account");
 
-                                return OAuth2AuthorizationRequest.from(authorizationRequest)
-                                                .additionalParameters(additionalParameters)
-                                                .build();
+                                if (redirectUri != null && !redirectUri.isBlank()) {
+                                        additionalParameters.put("redirect_uri", redirectUri);
+                                }
+
+                                OAuth2AuthorizationRequest.Builder builder = OAuth2AuthorizationRequest.from(
+                                                authorizationRequest)
+                                                .additionalParameters(additionalParameters);
+
+                                if (redirectUri != null && !redirectUri.isBlank()) {
+                                        builder.redirectUri(redirectUri);
+                                }
+
+                                return builder.build();
                         }
                 };
         }

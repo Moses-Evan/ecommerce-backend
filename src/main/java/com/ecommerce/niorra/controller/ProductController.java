@@ -35,7 +35,7 @@ public class ProductController {
 
 		    product.setProductImages(updatedImages);
 		});
-		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(products));
+		// System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(products));
 		return products;
 	}
 
