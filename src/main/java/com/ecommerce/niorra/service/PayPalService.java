@@ -11,6 +11,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.ecommerce.niorra.config.PayPalProperties;
 import com.ecommerce.niorra.entity.Order;
@@ -25,16 +26,18 @@ public class PayPalService {
         private final PayPalProperties properties;
 
         @SuppressWarnings("unchecked")
-        public Map<String, Object> createOrder(Order order) {
+        public Map<String, Object> createOrder(Order order, boolean nativeApp) {
                 Map<String, Object> amount = Map.of(
                                 "currency_code", properties.getCurrency(),
                                 "value", String.format(java.util.Locale.ROOT, "%.2f", order.getTotalAmount()));
                 Map<String, Object> purchaseUnit = Map.of(
                                 "reference_id", order.getOrderNumber(),
                                 "amount", amount);
+                String returnUrl = callbackUrl(properties.getReturnUrl(), nativeApp);
+                String cancelUrl = callbackUrl(properties.getCancelUrl(), nativeApp);
                 Map<String, Object> applicationContext = Map.of(
-                                "return_url", properties.getReturnUrl(),
-                                "cancel_url", properties.getCancelUrl(),
+                                "return_url", returnUrl,
+                                "cancel_url", cancelUrl,
                                 "user_action", "PAY_NOW");
                 Map<String, Object> request = Map.of(
                                 "intent", "CAPTURE",
@@ -48,6 +51,16 @@ public class PayPalService {
                                 .body(request)
                                 .retrieve()
                                 .body(Map.class);
+        }
+
+        private String callbackUrl(String url, boolean nativeApp) {
+                if (!nativeApp) {
+                        return url;
+                }
+                return UriComponentsBuilder.fromUriString(url)
+                                .queryParam("nativeApp", true)
+                                .build()
+                                .toUriString();
         }
 
         @SuppressWarnings("unchecked")

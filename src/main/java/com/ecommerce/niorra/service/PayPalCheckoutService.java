@@ -32,7 +32,10 @@ public class PayPalCheckoutService {
     private final PayPalProperties properties;
 
     @Transactional
-    public PayPalCheckoutResponse createPayPalOrder(Long orderId, Authentication authentication) {
+    public PayPalCheckoutResponse createPayPalOrder(
+            Long orderId,
+            Authentication authentication,
+            boolean nativeApp) {
         Order order = findAuthorizedOrderForUpdate(orderId, authentication);
         if (order.getPaymentMethod() != PaymentMethod.PAYPAL) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Order payment method is not PayPal");
@@ -44,7 +47,7 @@ public class PayPalCheckoutService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "PayPal checkout has already been started");
         }
 
-        Map<String, Object> paypalOrder = payPalService.createOrder(order);
+        Map<String, Object> paypalOrder = payPalService.createOrder(order, nativeApp);
         String paypalOrderId = (String) paypalOrder.get("id");
         if (paypalOrderId == null || paypalOrderId.isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "PayPal did not return an order ID");
