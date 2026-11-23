@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -54,8 +55,8 @@ public class SecurityConfig {
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                                 .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/admin/api/v1/**").hasRole("ADMIN")
                                                 .requestMatchers("/api/auth/**", "/api/products/**",
-                                                                "/admin/api/v1/products/**",
                                                                 "/api/paypal/webhooks")
                                                 .permitAll()
                                                 .requestMatchers("/api/orders/**", "/api/addresses/**").authenticated()
@@ -135,9 +136,16 @@ public class SecurityConfig {
         }
 
         @Bean
-        public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-                UserDetails admin = User.withUsername("admin")
-                                .password(passwordEncoder.encode("admin"))
+        public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder,
+                        @Value("${app.admin.username:}") String adminUsername,
+                        @Value("${app.admin.password:}") String adminPassword) {
+                if (adminUsername.isBlank() || adminPassword.isBlank()) {
+                        throw new IllegalStateException(
+                                        "ADMIN_USERNAME and ADMIN_PASSWORD must be configured.");
+                }
+
+                UserDetails admin = User.withUsername(adminUsername)
+                                .password(passwordEncoder.encode(adminPassword))
                                 .roles("ADMIN")
                                 .build();
 

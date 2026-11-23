@@ -1,10 +1,13 @@
 package com.ecommerce.niorra.service;
 
 import java.security.Key;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import jakarta.annotation.PostConstruct;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -14,11 +17,18 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    @Value("${app.jwt.secret:niorra-google-auth-secret-key-very-long-1234567890}")
+    @Value("${app.jwt.secret:}")
     private String secret;
 
-    @Value("${app.jwt.expiration-ms:2592000000}")
+    @Value("${app.jwt.expiration-ms:900000}")
     private long expirationMs;
+
+    @PostConstruct
+    void validateConfiguration() {
+        if (secret.getBytes(StandardCharsets.UTF_8).length < 32) {
+            throw new IllegalStateException("JWT_SECRET must be at least 32 bytes long.");
+        }
+    }
 
     public String generateToken(String email, String role) {
         Date now = new Date();
@@ -35,6 +45,10 @@ public class JwtService {
 
     public String extractEmail(String token) {
         return getClaims(token).getSubject();
+    }
+
+    public String extractRole(String token) {
+        return getClaims(token).get("role", String.class);
     }
 
     public boolean isTokenValid(String token) {
@@ -55,6 +69,6 @@ public class JwtService {
     }
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 }
